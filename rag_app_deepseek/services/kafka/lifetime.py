@@ -1,13 +1,13 @@
 import asyncio
-import json
 import ssl
-import traceback
-from decimal import Decimal
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from fastapi import FastAPI
 from loguru import logger
 
+from rag_app_deepseek.services.text_embeddings.text_embeddings_consumer import (
+    text_embeddings_consumer_handler,
+)
 from rag_app_deepseek.settings import settings
 
 
@@ -78,24 +78,15 @@ async def init_kafka(app: FastAPI) -> None:  # pragma: no cover
     logger.info("Kafka consumer started")
 
 
-async def kafka_consumer_handler(app: FastAPI):  # type: ignore
+async def kafka_consumer_handler(app: FastAPI) -> None:
     """
     Handle kafka consumer messages.
 
     :param app: current application.
-    :raises Exception: In case we fail to log.
     """
-    async for msg in app.state.kafka_consumer_text_embeddings:
-        try:
-            msg_json = json.loads(
-                msg,
-                parse_float=Decimal,
-            )
-            logger.info("new message consumed", msg_json)
-            await app.state.kafka_consumer_text_embeddings.commit()
-        except Exception:
-            logger.error(traceback.format_exc())
-            raise  # to avoid losing the stack trace!
+    await text_embeddings_consumer_handler(
+        app.state.kafka_consumer_text_embeddings,
+    )
 
 
 async def shutdown_kafka(app: FastAPI) -> None:  # pragma: no cover

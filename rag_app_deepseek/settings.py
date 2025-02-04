@@ -3,7 +3,7 @@ from pathlib import Path
 from tempfile import gettempdir
 from typing import Optional
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 TEMP_DIR = Path(gettempdir())
 
@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     kafka_sasl_password: Optional[str] = None
     kafka_sasl_mechanism: str = "PLAIN"
     kafka_topic_text: str = "rag-text-local"
+
+    ollama_host: str = "localhost:11434"
+    ollama_model: str = "deepseek-r1:32b"
 
     @property
     def kafka_bootstrap_servers_list(self) -> list[str]:
