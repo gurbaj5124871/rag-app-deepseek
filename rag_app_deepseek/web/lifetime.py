@@ -18,11 +18,12 @@ async def lifespan(app: FastAPI):  # type: ignore
     :param app: the fastAPI application.
     """
     await init_kafka(app)
-    init_milvus()
+    milvus_client = init_milvus()
+    app.state.milvus_client = milvus_client
     yield
 
     await shutdown_kafka(app)
     await asyncio.sleep(
         3,
     )  # sleep for 3 seconds so that milvus writes can be completed before disconnecting
-    disconnect_milvus()
+    disconnect_milvus(milvus_client)
