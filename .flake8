@@ -68,6 +68,10 @@ ignore =
   DJ11,
   ; Found mutable module constant.
   WPS407,
+  ; Missing "Yields" in Docstring: - yield
+  DAR301,
+  ; Found empty module
+  WPS411,
 
 per-file-ignores =
   ; all tests

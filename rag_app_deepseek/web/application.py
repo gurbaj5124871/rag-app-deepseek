@@ -7,10 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from rag_app_deepseek.logging import configure_logging
 from rag_app_deepseek.web.api.router import api_router
-from rag_app_deepseek.web.lifetime import (
-    register_shutdown_event,
-    register_startup_event,
-)
+from rag_app_deepseek.web.lifetime import lifespan
 
 APP_ROOT = Path(__file__).parent.parent
 
@@ -28,15 +25,12 @@ def get_app() -> FastAPI:
         title="rag_app_deepseek",
         description="RAG application using Deepseek LLM and Vector Database",
         version=metadata.version("rag_app_deepseek"),
+        lifespan=lifespan,
         docs_url=None,
         redoc_url=None,
         openapi_url="/api/openapi.json",
         default_response_class=UJSONResponse,
     )
-
-    # Adds startup and shutdown events.
-    register_startup_event(app)
-    register_shutdown_event(app)
 
     # Main router for the API.
     app.include_router(router=api_router, prefix="/api")

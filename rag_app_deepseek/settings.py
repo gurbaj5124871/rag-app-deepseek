@@ -49,6 +49,13 @@ class Settings(BaseSettings):
     ollama_host: str = "localhost:11434"
     ollama_model: str = "deepseek-r1:32b"
 
+    milvus_conn_name: str = "rag_app_deepseek"
+    milvus_host: str = "localhost"
+    milvus_port: str = "19530"
+    milvus_username: str = ""
+    milvus_password: str = ""
+    milvus_db_name: str = "default"
+
     @property
     def kafka_bootstrap_servers_list(self) -> list[str]:
         """

@@ -1,44 +1,28 @@
-from typing import Awaitable, Callable
+import asyncio
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
 from rag_app_deepseek.services.kafka.lifetime import init_kafka, shutdown_kafka
+from rag_app_deepseek.services.milvus.lifetime import disconnect_milvus, init_milvus
 
 
-def register_startup_event(
-    app: FastAPI,
-) -> Callable[[], Awaitable[None]]:  # pragma: no cover
+@asynccontextmanager
+async def lifespan(app: FastAPI):  # type: ignore
     """
-    Actions to run on application startup.
+    Actions to run on application startup and shutdown.
 
     This function uses fastAPI app to store data
-    inthe state, such as db_engine.
+    in the state, such as kafka consumer.
 
     :param app: the fastAPI application.
-    :return: function that actually performs actions.
     """
+    await init_kafka(app)
+    init_milvus()
+    yield
 
-    @app.on_event("startup")
-    async def _startup() -> None:  # noqa: WPS430
-        await init_kafka(app)
-        pass  # noqa: WPS420
-
-    return _startup
-
-
-def register_shutdown_event(
-    app: FastAPI,
-) -> Callable[[], Awaitable[None]]:  # pragma: no cover
-    """
-    Actions to run on application's shutdown.
-
-    :param app: fastAPI application.
-    :return: function that actually performs actions.
-    """
-
-    @app.on_event("shutdown")
-    async def _shutdown() -> None:  # noqa: WPS430
-        await shutdown_kafka(app)
-        pass  # noqa: WPS420
-
-    return _shutdown
+    await shutdown_kafka(app)
+    await asyncio.sleep(
+        3,
+    )  # sleep for 3 seconds so that milvus writes can be completed before disconnecting
+    disconnect_milvus()

@@ -13,7 +13,7 @@ from rag_app_deepseek.settings import settings
 
 async def init_kafka(app: FastAPI) -> None:  # pragma: no cover
     """
-    Initialize kafka producer needed for test cases and consumer for text embeddings.
+    Initialise kafka producer needed for test cases and consumer for text embeddings.
 
     This function creates producer
     and makes initial connection to
@@ -102,3 +102,4 @@ async def shutdown_kafka(app: FastAPI) -> None:  # pragma: no cover
     app.state.kafka_consumer_text_embeddings_task.cancel()
     await app.state.kafka_consumer_text_embeddings.stop()
     await app.state.kafka_producer.stop()
+    logger.info("kafka consumer disconnected")

@@ -12,6 +12,8 @@ services:
     depends_on:
       redpanda-0:
         condition: service_healthy
+      milvus:
+        condition: service_healthy
     environment:
       HOST: 0.0.0.0
       TESTKAFKA_KAFKA_BOOTSTRAP_SERVERS: '["redpanda-0:19092"]'
@@ -23,10 +25,10 @@ services:
     - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
     - --advertise-kafka-addr internal://redpanda-0:9092,external://localhost:19092
     - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
-      # Address the broker advertises to clients that connect to the HTTP Proxy.
+        # Address the broker advertises to clients that connect to the HTTP Proxy.
     - --advertise-pandaproxy-addr internal://redpanda-0:8082,external://localhost:18082
     - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
-      # Redpanda brokers use the RPC API to communicate with eachother internally.
+        # Redpanda brokers use the RPC API to communicate with eachother internally.
     - --rpc-addr redpanda-0:33145
     - --advertise-rpc-addr redpanda-0:33145
     - --smp 1
@@ -48,6 +50,65 @@ services:
       timeout: 3s
       retries: 5
       start_period: 5s
+
+  milvus-etcd:
+    container_name: milvus-etcd
+    image: quay.io/coreos/etcd:v3.5.5
+    environment:
+    - ETCD_AUTO_COMPACTION_MODE=revision
+    - ETCD_AUTO_COMPACTION_RETENTION=1000
+    - ETCD_QUOTA_BACKEND_BYTES=4294967296
+    - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+    - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio:
+    container_name: milvus-minio
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+    - "9001:9001"
+    - "9000:9000"
+    volumes:
+    - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/minio:/minio_data
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  milvus:
+    container_name: milvus-standalone
+    image: milvusdb/milvus:v2.3.21
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+    - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: milvus-etcd:2379
+      MINIO_ADDRESS: minio:9000
+    volumes:
+    - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
+    ports:
+    - "19530:19530"
+    - "9091:9091"
+    depends_on:
+    - "milvus-etcd"
+    - "minio"
 
 volumes:
   redpanda-0: {}
