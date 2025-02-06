@@ -48,11 +48,13 @@ This project is a RAG (Retrieval-Augmented Generation) application which combine
     $ ollama stop deepseek-r1:32b
     ```
 
-3. [Apache Kafka](https://kafka.apache.org/): It's an open-source distributed event streaming platform used for high-throughput, real-time data streaming
+3. [Milvus](https://milvus.io/): It's an open-source vector database built for GenAI applications.
 
-4. [FastAPI](https://fastapi.tiangolo.com/) - It's a modern, fast (high-performance), web framework for building APIs with Python based on standard Python type hints.
+4. [Apache Kafka](https://kafka.apache.org/): It's an open-source distributed event streaming platform used for high-throughput, real-time data streaming
 
-5. [Poetry](https://python-poetry.org/) - It's a modern dependency management tool. To install it use the below command.
+5. [FastAPI](https://fastapi.tiangolo.com/) - It's a modern, fast (high-performance), web framework for building APIs with Python based on standard Python type hints.
+
+6. [Poetry](https://python-poetry.org/) - It's a modern dependency management tool. To install it use the below command.
 
     ```
     pipx install poetry
