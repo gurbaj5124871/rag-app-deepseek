@@ -5,7 +5,7 @@ from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from fastapi import FastAPI
 from loguru import logger
 
-from rag_app_deepseek.services.text_embeddings.text_embeddings_consumer import (
+from rag_app_deepseek.services.text_embeddings.consumer import (
     text_embeddings_consumer_handler,
 )
 from rag_app_deepseek.settings import settings
@@ -73,20 +73,9 @@ async def init_kafka(app: FastAPI) -> None:  # pragma: no cover
     await app.state.kafka_consumer_text_embeddings.start()
 
     app.state.kafka_consumer_text_embeddings_task = asyncio.create_task(
-        kafka_consumer_handler(app),
+        text_embeddings_consumer_handler(app),
     )
     logger.info("Kafka consumer started")
-
-
-async def kafka_consumer_handler(app: FastAPI) -> None:
-    """
-    Handle kafka consumer messages.
-
-    :param app: current application.
-    """
-    await text_embeddings_consumer_handler(
-        app.state.kafka_consumer_text_embeddings,
-    )
 
 
 async def shutdown_kafka(app: FastAPI) -> None:  # pragma: no cover

@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from ollama import AsyncClient
 
 from rag_app_deepseek.settings import settings
@@ -13,7 +15,7 @@ class OllamaClient:
     client = AsyncClient(host=settings.ollama_host)
     model = settings.ollama_model
 
-    async def generate_embeddings_from_text(self, text: str):  # type: ignore
+    async def generate_embeddings_from_text(self, text: Sequence[str]):  # type: ignore
         """
         Generates embeddings from the text provided.
 

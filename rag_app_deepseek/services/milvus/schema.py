@@ -8,9 +8,9 @@ text_embeddings_field_primary_key = FieldSchema(
 )
 
 text_embeddings_field_embedding = FieldSchema(
-    name="vector",
+    name="embedding",
     dtype=DataType.FLOAT_VECTOR,
-    dim=768,  # noqa: WPS432
+    dim=5120,  # noqa: WPS432
 )
 
 text_embeddings_field_text = FieldSchema(
@@ -35,3 +35,9 @@ text_embeddings_schema = CollectionSchema(
     ],
     description="text_embeddings_schema",
 )
+
+
+class MilvusCollections:
+    """Enum of milvus collections."""
+
+    TEXT_EMBEDDINGS = "text_embeddings_schema"
