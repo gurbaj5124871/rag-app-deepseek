@@ -31,6 +31,7 @@ def get_app() -> FastAPI:
         openapi_url="/api/openapi.json",
         default_response_class=UJSONResponse,
     )
+    app.openapi_version = "3.0.2"
 
     # Main router for the API.
     app.include_router(router=api_router, prefix="/api")

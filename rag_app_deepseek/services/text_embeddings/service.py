@@ -72,3 +72,40 @@ def insert_text_with_embeddings_into_milvus(  # noqa: WPS234
         data.append(asdict(txt_emb))
 
     return milvus_client.insert(collection_name="text_embeddings_schema", data=data)
+
+
+class GetTextsMatchingVectorResEntity(TypedDict):
+    """Get texts matching vector res entity."""
+
+    text: str
+
+
+class GetTextsMatchingVectorRes(TypedDict):
+    """TypedDict for the response of inserting text with embeddings."""
+
+    id: int
+    distance: float
+    entity: GetTextsMatchingVectorResEntity
+
+
+def get_texts_matching_vector_search(
+    milvus_client: MilvusClient,
+    embedding_to_match: Sequence[float],
+) -> List[GetTextsMatchingVectorRes]:
+    """
+    Retrieves top 10 results matching the embeddings.
+
+    :param milvus_client: client to make queries to milvus
+    :param embedding_to_match: embeddings to match search against with
+    :returns: List of TypedDict
+    """
+    results = milvus_client.search(
+        collection_name="text_embeddings_schema",
+        data=[embedding_to_match],
+        anns_field="embedding",
+        output_fields=["text"],
+        limit=10,
+        timeout=3000,  # noqa: WPS432
+    )
+
+    return results[0]

@@ -33,7 +33,7 @@ async def text_embeddings_consumer_handler(app: FastAPI) -> None:  # noqa: WPS21
     :raises Exception: In case we fail generate embeddings or insert into milvus.
     :raises RuntimeError: If the data list is empty.
     """
-    ollama_client = OllamaClient()
+    ollama_client: OllamaClient = app.state.ollama_client
     milvus_client: MilvusClient = app.state.milvus_client
     consumer: AIOKafkaConsumer = app.state.kafka_consumer_text_embeddings
 
