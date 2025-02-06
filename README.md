@@ -169,6 +169,61 @@ For running tests on your local machine.
 pytest -vv .
 ```
 
+## Example Demo
+
+The data indexed into milvus:
+
+```
+{
+	"text": "Hi! My name is Gurbaj Singh. I am a senior backend engineer with over 7+ years of relevant experience in various product based startups in the fields of AI, Blockchain and Data intensive Applications. In my recent role, I architected and implemented a real-time alerting system for blockchain security products, specifically focusing on Solana and Cosmos-based chains. This system was designed to handle the challenges of ever-growing blockchain data and an expanding user base, ensuring scalability and reliability. My hands-on experience with real-time data processing, system architecture, and scalable solutions aligns closely with the technical stack and requirements of this opportunity.",
+	"timestamp": "2025-01-29 08:49:13.676"
+}
+```
+
+The user prompted:
+
+```
+Can you tell me about gurbaj?
+```
+
+API output response:
+
+```
+<think>
+Okay, so I need to figure out how to answer the question "can you tell me about gurbaj?" using the provided context. Let's break it down step by step.
+
+First, I should look at the context given. It includes several sentences about Gurbaj Singh:
+
+1. He is a senior backend engineer with over 7+ years of experience.
+2. His experience spans product-based startups in AI, Blockchain, and Data-intensive Applications.
+3. He designed a system to handle growing blockchain data and expanding user bases, ensuring scalability and reliability.
+4. Recently, he architected and implemented a real-time alerting system for blockchain security on Solana and Cosmos chains.
+5. His hands-on experience includes real-time data processing, system architecture, and scalable solutions.
+
+Now, the question is asking about Gurbaj, so I need to compile this information into a coherent answer. It should include his name, role, experience, specific projects or roles he's had, and his expertise areas.
+
+I should structure it in a way that flows naturally, perhaps starting with an introduction of who he is, followed by his experience, then some specifics about his recent work, and ending with how his skills align with opportunities.
+
+Wait, I need to make sure not to include any information outside the context. For example, there's mention of Solana and Cosmos- based chains in his recent role, so that should be included as specific areas he's focused on.
+
+Also, I need to ensure that the answer is concise but covers all key points from the context without adding unnecessary details or making assumptions beyond what's provided.
+
+I think a good approach would be:
+1. Introduce Gurbaj Singh and his current role.
+2. Mention his years of experience and fields he's worked in.
+3. Highlight a specific project or system he architected recently.
+4. Note his expertise areas that align with opportunities.
+
+Putting it all together, the answer should flow smoothly, connecting each piece of information logically to present a comprehensive overview of Gurbaj based on the context provided.
+
+I also need to avoid using any markdown formatting and keep the language clear and straightforward as per the user's request.
+</think>
+
+Gurbaj Singh is a senior backend engineer with over seven years of experience in product-based startups, specializing in AI, Blockchain, and Data-intensive Applications. He has designed systems to manage growing blockchain data and expanding user bases, ensuring scalability and reliability. Recently, he architected and implemented a real-time alerting system for blockchain security products focused on Solana and Cosmos chains. His expertise lies in real-time data processing, system architecture, and scalable solutions, making him well-suited for relevant opportunities.
+```
+
+![demo-screenshot](/rag_app_deepseek/static/images/demo-screenshot.png)
+
 ## Note
 
 This project was generated using [fastapi_template](https://github.com/s3rius/FastAPI-template).

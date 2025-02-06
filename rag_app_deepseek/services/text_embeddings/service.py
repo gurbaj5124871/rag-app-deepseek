@@ -2,7 +2,10 @@ import re
 from dataclasses import asdict, dataclass
 from typing import List, Sequence, TypedDict
 
+from ollama import ChatResponse
 from pymilvus import MilvusClient
+
+from rag_app_deepseek.services.ollama.service import OllamaClient
 
 
 def split_text_into_chunks(  # noqa: C901 WPS231
@@ -109,3 +112,40 @@ def get_texts_matching_vector_search(
     )
 
     return results[0]
+
+
+async def prompt_llm_with_context_and_query(
+    ollama_client: OllamaClient,
+    context: List[str],
+    user_query: str,
+) -> ChatResponse:
+    """
+    Prompt llm to answer user's query from the context fetched from the database.
+
+    :param ollama_client: llm client to make api requests to the model
+    :param context: List of texts fetched from db to provide context to llm
+    :param user_query: user's query prompt which needs to be answered via llm
+
+    :returns: ChatResponse
+    """
+    system_prompt = """
+    Human: You are an AI assistant. You are able to find answers to the questions from the contextual passage snippets provided.
+    """
+
+    user_prompt = """
+    Use the following pieces of information enclosed in <context> tags to provide an answer to the question enclosed in <question> tags.
+    <context>
+    {context_data}
+    </context>
+    <question>
+    {query}
+    </question>
+    """.format(
+        context_data="\n".join(context),
+        query=user_query,
+    )
+
+    return await ollama_client.chat(
+        user_prompt=user_prompt,
+        system_prompt=system_prompt,
+    )

@@ -72,6 +72,11 @@ ignore =
   DAR301,
   ; Found empty module
   WPS411,
+  ; line too long
+  E501,
+  ; Wrong multiline string usage
+  WPS462,
+
 
 per-file-ignores =
   ; all tests
